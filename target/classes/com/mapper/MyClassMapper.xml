@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.MyClassMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.MyClass">
+        <id column="class_id" jdbcType="BIGINT" property="classId"/>
+        <result column="class_code" jdbcType="VARCHAR" property="classCode"/>
+        <result column="class_name" jdbcType="VARCHAR" property="className"/>
+        <result column="class_no" jdbcType="VARCHAR" property="classNo"/>
+        <result column="class_qrcode" jdbcType="VARCHAR" property="classQrcode"/>
+        <result column="class_qrcode_src" jdbcType="VARCHAR" property="classQrcodeSrc"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    class_id, class_code, class_name, class_no, class_qrcode, class_qrcode_src, user_id
+  </sql>
+
+
+    <!--根据课堂id号 获取 学生或老师参加的课堂信息-->
+    <select id="getClassInfo" parameterType="java.lang.Long" resultType="com.pojo.MyClassTeaInfo">
+    select * from myclass where class_id = #{classId}
+  </select>
+
+
+    <!--根据课号 获取该课堂下的老师Id号-->
+    <select id="getUserId" parameterType="com.pojo.MyClass" resultType="java.lang.Long">
+    select user_id from myclass where class_no = #{classNo}
+  </select>
+
+    <!--获取课堂Id-->
+    <select id="getClassId" parameterType="com.pojo.MyClass" resultType="java.lang.Integer">
+    select class_id from myclass where class_no = #{classNo} and class_name = #{className} and class_code = #{classCode}
+  </select>
+
+
+    <!--根据老师id获取创建的课堂信息-->
+    <select id="getTeaClassInfo" parameterType="java.lang.Long" resultType="com.pojo.MyClassTeaInfo">
+
+    select * from myclass where user_id = #{0}
+
+  </select>
+
+
+    <!--根据课堂id获取用户id-->
+    <select id="getUserIdByClassId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select user_id from myclass where class_id = #{0}
+  </select>
+
+
+    <!--根据加课码搜索课堂详情-->
+    <select id="getClassInfoByCode" parameterType="java.lang.String" resultType="com.pojo.MyClass">
+
+    select * from myclass where class_code = #{0} or class_qrcode = #{0}
+
+
+  </select>
+
+
+    <!--根据课堂Id 删除课堂记录-->
+    <delete id="disMissByClassId" parameterType="java.lang.Long">
+    delete from myclass where class_id = #{classId}
+  </delete>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from myclass
+        where class_id = #{classId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from myclass
+    where class_id = #{classId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.pojo.MyClass">
+    insert into myclass (class_id, class_code, class_name,
+      class_no, class_qrcode, class_qrcode_src, 
+      user_id)
+    values (#{classId,jdbcType=BIGINT}, #{classCode,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, 
+      #{classNo,jdbcType=VARCHAR}, #{classQrcode,jdbcType=VARCHAR}, #{classQrcodeSrc,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT})
+  </insert>
+
+
+    <!--创建课堂-->
+    <insert id="insertSelective" parameterType="com.pojo.MyClass" useGeneratedKeys="true" keyProperty="class_id">
+        insert into myclass
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classId != null">
+                class_id,
+            </if>
+            <if test="classCode != null">
+                class_code,
+            </if>
+            <if test="className != null">
+                class_name,
+            </if>
+            <if test="classNo != null">
+                class_no,
+            </if>
+            <if test="classQrcode != null">
+                class_qrcode,
+            </if>
+            <if test="classQrcodeSrc != null">
+                class_qrcode_src,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classId != null">
+                #{classId,jdbcType=BIGINT},
+            </if>
+            <if test="classCode != null">
+                #{classCode,jdbcType=VARCHAR},
+            </if>
+            <if test="className != null">
+                #{className,jdbcType=VARCHAR},
+            </if>
+            <if test="classNo != null">
+                #{classNo,jdbcType=VARCHAR},
+            </if>
+            <if test="classQrcode != null">
+                #{classQrcode,jdbcType=VARCHAR},
+            </if>
+            <if test="classQrcodeSrc != null">
+                #{classQrcodeSrc,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pojo.MyClass">
+        update myclass
+        <set>
+            <if test="classCode != null">
+                class_code = #{classCode,jdbcType=VARCHAR},
+            </if>
+            <if test="className != null">
+                class_name = #{className,jdbcType=VARCHAR},
+            </if>
+            <if test="classNo != null">
+                class_no = #{classNo,jdbcType=VARCHAR},
+            </if>
+            <if test="classQrcode != null">
+                class_qrcode = #{classQrcode,jdbcType=VARCHAR},
+            </if>
+            <if test="classQrcodeSrc != null">
+                class_qrcode_src = #{classQrcodeSrc,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where class_id = #{classId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.pojo.MyClass">
+    update myclass
+    set class_code = #{classCode,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      class_no = #{classNo,jdbcType=VARCHAR},
+      class_qrcode = #{classQrcode,jdbcType=VARCHAR},
+      class_qrcode_src = #{classQrcodeSrc,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT}
+    where class_id = #{classId,jdbcType=BIGINT}
+  </update>
+</mapper>

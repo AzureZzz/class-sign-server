@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+		 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+
+    <!--<import resource="classpath:applicationContext-redis.xml"/>-->
+
+    <!-- MVC注解驱动 -->
+    <mvc:annotation-driven/>
+    <!--<cache:annotation-driven />-->
+    <!--<cache:annotation-driven cache-manager="redisCacheManager"/>-->
+
+    <!-- 配置包扫描 （不用扫描mapper层）-->
+    <context:component-scan base-package="com.controller"/>
+
+
+
+<!--
+    <import resource="classpath:applicationContext-shiro.xml"/>
+-->
+
+
+
+
+
+
+
+
+
+
+    <!--
+    <context:component-scan base-package="com.WebSocket"/>
+-->
+    <aop:config proxy-target-class="false"> </aop:config>
+     <!--<aop:aspectj-autoproxy  proxy-target-class="true"></aop:aspectj-autoproxy>-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
+    <!-- 文件上传配置
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxUploadSize" value="1024000"/>
+
+    </bean>
+-->
+
+
+    <!-- 视图解析器 （针对android来说不需要） -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/testView/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--两个标准配置  -->
+    <!-- 将springmvc不能处理的请求交给tomcat -->
+    <mvc:default-servlet-handler/>
+
+
+</beans>

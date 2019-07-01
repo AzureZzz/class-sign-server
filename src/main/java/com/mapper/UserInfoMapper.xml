@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.UserInfo">
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_sex" jdbcType="TINYINT" property="userSex"/>
+        <result column="user_nickname" jdbcType="VARCHAR" property="userNickname"/>
+        <result column="user_head_src" jdbcType="VARCHAR" property="userHeadSrc"/>
+        <result column="user_major" jdbcType="VARCHAR" property="userMajor"/>
+        <result column="user_grade" jdbcType="VARCHAR" property="userGrade"/>
+        <result column="user_email" jdbcType="VARCHAR" property="userEmail"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.pojo.UserInfo">
+    insert into user_info (user_id, user_sex, user_nickname, 
+      user_head_src, user_major, user_grade, 
+      user_email)
+    values (#{userId,jdbcType=BIGINT}, #{userSex,jdbcType=TINYINT}, #{userNickname,jdbcType=VARCHAR}, 
+      #{userHeadSrc,jdbcType=VARCHAR}, #{userMajor,jdbcType=VARCHAR}, #{userGrade,jdbcType=VARCHAR}, 
+      #{userEmail,jdbcType=VARCHAR})
+  </insert>
+
+
+    <!--获取用户的个人信息-->
+    <select id="getUserInfoByUserId" parameterType="com.pojo.UserInfo" resultType="com.pojo.UserInfoPackage">
+    select * from user_info where user_id = #{userId}
+  </select>
+
+
+    <!--修改个人头像地址-->
+    <update id="updateUserInfo" parameterType="com.pojo.UserInfo">
+
+    update user_info set user_head_src = #{userHeadSrc} where user_id = #{userId}
+
+  </update>
+
+
+    <select id="getUserInfoRec" parameterType="com.pojo.User" resultType="java.lang.Integer">
+    select count(*) from user_info where user_id = #{userId}
+
+  </select>
+
+
+    <select id="getUserHeadSrc" parameterType="java.lang.Long" resultType="java.lang.String">
+
+  select user_head_src from user_info where user_id = #{0}
+</select>
+
+
+    <!--//选择性更新个人信息内容-->
+    <update id="updateSelective" parameterType="com.pojo.UserInfo">
+
+        update user_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userMajor!=null">user_major=#{userMajor},</if>
+            <if test="userGrade!=null">user_grade=#{userGrade},</if>
+            <if test="userEmail!=null">user_email=#{userEmail},</if>
+            <if test="userSex!=null">user_sex=#{userSex},</if>
+        </trim>
+        WHERE user_id=#{userId}
+    </update>
+
+
+    <!--//写入用户信息-->
+    <insert id="insertSelective" parameterType="com.pojo.UserInfo">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="userNickname != null">
+                user_nickname,
+            </if>
+            <if test="userHeadSrc != null">
+                user_head_src,
+            </if>
+            <if test="userMajor != null">
+                user_major,
+            </if>
+            <if test="userGrade != null">
+                user_grade,
+            </if>
+            <if test="userEmail != null">
+                user_email,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userSex != null">
+                #{userSex,jdbcType=TINYINT},
+            </if>
+            <if test="userNickname != null">
+                #{userNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="userHeadSrc != null">
+                #{userHeadSrc,jdbcType=VARCHAR},
+            </if>
+            <if test="userMajor != null">
+                #{userMajor,jdbcType=VARCHAR},
+            </if>
+            <if test="userGrade != null">
+                #{userGrade,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

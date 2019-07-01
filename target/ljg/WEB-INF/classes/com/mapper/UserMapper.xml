@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.User">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="user_password" jdbcType="VARCHAR" property="userPassword"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+        <result column="user_school" jdbcType="VARCHAR" property="userSchool"/>
+        <result column="user_type" jdbcType="TINYINT" property="userType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, user_phone, user_password, user_name, user_no, user_school, user_type
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+
+    <!--查询用户注册记录-->
+    <select id="getUserRecord" parameterType="com.pojo.User" resultType="java.lang.Integer">
+    select count(*) from  user where user_phone = #{userPhone}
+
+  </select>
+
+    <!--获取用户ID-->
+    <select id="gerUserId" parameterType="com.pojo.User" resultType="java.lang.Integer">
+    select user_id from user where user_phone = #{userPhone}
+  </select>
+
+    <!--用户登陆-->
+    <select id="userLogin" parameterType="com.pojo.User" resultType="java.lang.Integer">
+      select user_id from user where user_phone = #{userPhone} and user_password = #{userPassword}
+  </select>
+
+    <!--获取用户所在学校-->
+    <select id="getUserSchool" parameterType="com.pojo.User" resultType="java.lang.String">
+
+  select user_school from user where user_phone = #{userPhone}
+
+</select>
+
+
+    <!--获取用户学号-->
+    <select id="getUserNo" parameterType="com.pojo.User" resultType="java.lang.String">
+    select user_no from user where user_phone = #{userPhone}
+  </select>
+
+
+    <!--获取用户的学号、学校、姓名、身份类型-->
+    <select id="getUserInfo" parameterType="com.pojo.User" resultType="com.pojo.User">
+    select * from  user where user_phone = #{userPhone}
+  </select>
+
+
+    <select id="getUserName" parameterType="java.lang.Long" resultType="java.lang.String">
+    select user_name from user  where user_id = #{0}
+  </select>
+
+
+    <select id="getUserType" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select user_type from user  where user_id = #{0}
+  </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.pojo.User">
+    insert into user (user_id, user_phone, user_password, 
+      user_name, user_no, user_school, 
+      user_type)
+    values (#{userId,jdbcType=BIGINT}, #{userPhone,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{userNo,jdbcType=VARCHAR}, #{userSchool,jdbcType=VARCHAR}, 
+      #{userType,jdbcType=TINYINT})
+  </insert>
+
+
+    <!--写入用户注册信息-->
+    <insert id="insertSelective" parameterType="com.pojo.User" useGeneratedKeys="true" keyProperty="user_id">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userNo != null">
+                user_no,
+            </if>
+            <if test="userSchool != null">
+                user_school,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userNo != null">
+                #{userNo,jdbcType=VARCHAR},
+            </if>
+            <if test="userSchool != null">
+                #{userSchool,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--选择性更新用户的信息-->
+    <update id="updateByPrimaryKeySelective" parameterType="com.pojo.User">
+
+        update user set
+        <if test="userNo != null">
+            user_no = #{userNo,jdbcType=VARCHAR},
+        </if>
+
+        user_name = #{userName,jdbcType=VARCHAR},
+        user_school = #{userSchool,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT}
+
+
+    </update>
+
+
+    <!--<set>-->
+    <!--&lt;!&ndash;<if test="userPhone != null">&ndash;&gt;-->
+    <!--&lt;!&ndash;user_phone = #{userPhone,jdbcType=VARCHAR},&ndash;&gt;-->
+    <!--&lt;!&ndash;</if>&ndash;&gt;-->
+    <!--&lt;!&ndash;<if test="userPassword != null">&ndash;&gt;-->
+    <!--&lt;!&ndash;user_password = #{userPassword,jdbcType=VARCHAR},&ndash;&gt;-->
+    <!--&lt;!&ndash;</if>&ndash;&gt;-->
+    <!--&lt;!&ndash;<if test="userName != null">&ndash;&gt;-->
+    <!--&lt;!&ndash;user_name = #{userName,jdbcType=VARCHAR},&ndash;&gt;-->
+    <!--&lt;!&ndash;</if>&ndash;&gt;-->
+    <!--<if test="userNo != null">-->
+    <!--user_no = #{userNo,jdbcType=VARCHAR},-->
+    <!--</if>-->
+    <!--&lt;!&ndash;<if test="userSchool != null">&ndash;&gt;-->
+    <!--&lt;!&ndash;user_school = #{userSchool,jdbcType=VARCHAR},&ndash;&gt;-->
+    <!--&lt;!&ndash;</if>&ndash;&gt;-->
+    <!--&lt;!&ndash;<if test="userType != null">&ndash;&gt;-->
+    <!--&lt;!&ndash;user_type = #{userType,jdbcType=TINYINT},&ndash;&gt;-->
+    <!--&lt;!&ndash;</if>&ndash;&gt;-->
+    <!--</set>-->
+
+
+    <update id="updateByPrimaryKey" parameterType="com.pojo.User">
+    update user
+
+     set
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_no = #{userNo,jdbcType=VARCHAR},
+      user_school = #{userSchool,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=TINYINT}
+    where user_id = #{userId,jdbcType=BIGINT}
+--     set user_phone = #{userPhone,jdbcType=VARCHAR},
+--       user_password = #{userPassword,jdbcType=VARCHAR},
+--       user_name = #{userName,jdbcType=VARCHAR},
+--       user_no = #{userNo,jdbcType=VARCHAR},
+--       user_school = #{userSchool,jdbcType=VARCHAR},
+--       user_type = #{userType,jdbcType=TINYINT}
+--     where user_id = #{userId,jdbcType=BIGINT}
+  </update>
+</mapper>

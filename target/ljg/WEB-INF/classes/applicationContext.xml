@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+			            http://www.springframework.org/schema/context
+			            http://www.springframework.org/schema/context/spring-context-4.2.xsd
+			            http://www.springframework.org/schema/mvc
+			            http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+			            http://www.springframework.org/schema/tx
+			            http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+			            http://mybatis.org/schema/mybatis-spring
+			            http://mybatis.org/schema/mybatis-spring.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+
+
+
+    <!-- 引入spring-websocket.xml
+    <import resource="spring-websocket.xml"/>-->
+
+
+
+    <!-- mybatis:scan会将com.mapper包里的所有接口当作mapper配置，之后可以自动引入mapper类 -->
+     <mybatis:scan base-package="com.mapper" />
+
+    <!-- 扫描com.*包下面的java文件，有Spring的相关注解的类，则把这些类注册为Spring的bean -->
+    <context:component-scan base-package="com.*"/>
+
+    <!-- 加载jdbc配置参数 -->
+    <context:property-placeholder
+            location="classpath:jdbc.properties"/>
+    <!--&lt;!&ndash; 连接池基本参数配置，类似数据库连接池 &ndash;&gt;-->
+    <!--<context:property-placeholder location="classpath:redis.properties"-->
+                                  <!--ignore-unresolvable="true" />-->
+
+    <!-- 配置c3p0数据源 -->
+    <bean id="dataSource"
+          class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass"
+                  value="${dataSource.driverClass}"/>
+        <property name="jdbcUrl" value="${dataSource.jdbcUrl}"/>
+        <property name="user" value="${dataSource.user}"/>
+        <property name="password" value="${dataSource.password}"/>
+        <property name="maxPoolSize"
+                  value="${dataSource.maxPoolSize}"/>
+        <property name="maxIdleTime"
+                  value="${dataSource.maxIdleTime}"/>
+        <property name="minPoolSize"
+                  value="${dataSource.minPoolSize}"/>
+        <property name="initialPoolSize"
+                  value="${dataSource.initialPoolSize}"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactory，org.mybatis.spring.SqlSessionFactoryBean是Mybatis社区开发用于整合Spring的bean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis.xml"/>
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <!--使用下面的方式配置参数，一行配置一个 -->
+                        <value>
+                            <!--offsetAsPageNum=true-->
+                            <!--rowBoundsWithCount=true-->
+                            <!--pageSizeZero=true-->
+                            <!--reasonable=true 可以确保页数在翻页时不越界-->
+                            reasonable=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+
+    </bean>
+
+    <!-- mapper扫描器 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="com.mapper"/>
+    </bean>
+
+    <!-- JDBC事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSource"/>
+
+
+    <!-- 启用支持annotation注解方式事务管理 -->
+    <tx:annotation-driven
+            transaction-manager="transactionManager"/>
+
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"></property>
+        <!--定义上传的最大大小，单位为byte-->
+        <!--<property name="maxUploadSize" value="5242440"></property>-->
+        <!--上传大小最大为500MB-->
+        <property name="maxUploadSize" value="4194304000"></property>
+    </bean>
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+</beans>

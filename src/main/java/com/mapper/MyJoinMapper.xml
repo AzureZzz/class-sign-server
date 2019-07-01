@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.MyJoinMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.MyJoin">
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="class_id" jdbcType="BIGINT" property="classId"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.pojo.MyJoin">
+    insert into myjoin (user_id, class_id)
+    values (#{userId,jdbcType=BIGINT}, #{classId,jdbcType=BIGINT})
+  </insert>
+
+
+    <!--根据用户id获取所有参加的课堂id号-->
+    <select id="getClassIdByUserId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select class_id from myjoin where user_id = #{userId}
+  </select>
+
+
+    <select id="getUserId" parameterType="com.pojo.MyClass" resultType="java.lang.Long">
+    select user_id from myjoin where class_id = #{classId}
+  </select>
+
+
+    <delete id="disMissJoinByClassId" parameterType="java.lang.Long">
+  delete from myjoin where  class_id = #{classId}
+</delete>
+
+
+    <delete id="deleteJoinInfo" parameterType="com.pojo.MyClass">
+  delete from myjoin where  class_id = #{classId} and user_id = #{userId}
+</delete>
+
+
+    <select id="getJoinRec" parameterType="com.pojo.MyClass" resultType="java.lang.Integer">
+        select count(*) from myjoin where  class_id = #{classId} and user_id = #{userId}
+    </select>
+
+
+
+    <insert id="insertSelective" parameterType="com.pojo.MyJoin">
+        insert into myjoin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="classId != null">
+                class_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="classId != null">
+                #{classId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+</mapper>

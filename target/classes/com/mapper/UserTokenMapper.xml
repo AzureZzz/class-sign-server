@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserTokenMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.UserToken">
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="token" jdbcType="VARCHAR" property="token"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.pojo.UserToken">
+    insert into user_token (user_id, token)
+    values (#{userId,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR})
+  </insert>
+
+
+    <!--获取token-->
+    <select id="getUserToken" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select token from user_token where user_id = #{userId}
+  </select>
+
+
+    <!--更新用户token-->
+    <update id="updateUserToken" parameterType="com.pojo.UserToken">
+   update user_token set token = #{token} where user_id = #{userId}
+ </update>
+
+
+    <insert id="insertSelective" parameterType="com.pojo.UserToken">
+        insert into user_token
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

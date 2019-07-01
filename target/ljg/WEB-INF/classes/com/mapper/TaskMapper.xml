@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.TaskMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.Task">
+        <id column="task_id" jdbcType="BIGINT" property="taskId"/>
+        <result column="task_type" jdbcType="TINYINT" property="taskType"/>
+        <result column="task_start" jdbcType="VARCHAR" property="taskStart"/>
+        <result column="task_end" jdbcType="VARCHAR" property="taskEnd"/>
+        <result column="task_code" jdbcType="VARCHAR" property="taskCode"/>
+        <result column="task_longitude" jdbcType="DOUBLE" property="taskLongitude"/>
+        <result column="task_latitude" jdbcType="DOUBLE" property="taskLatitude"/>
+        <result column="class_id" jdbcType="BIGINT" property="classId"/>
+        <result column="task_name" jdbcType="VARCHAR" property="taskName"/>
+        <result column="task_qr_src" jdbcType="VARCHAR" property="taskQrSrc"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    task_id, task_type, task_start, task_end, task_code, task_longitude, task_latitude,
+    class_id, task_name, task_qr_src
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from task
+        where task_id = #{taskId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from task
+    where task_id = #{taskId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.pojo.Task">
+    insert into task (task_id, task_type, task_start,
+      task_end, task_code, task_longitude,
+      task_latitude, class_id, task_name,
+      task_qr_src)
+    values (#{taskId,jdbcType=BIGINT}, #{taskType,jdbcType=TINYINT}, #{taskStart,jdbcType=VARCHAR},
+      #{taskEnd,jdbcType=VARCHAR}, #{taskCode,jdbcType=VARCHAR}, #{taskLongitude,jdbcType=DOUBLE},
+      #{taskLatitude,jdbcType=DOUBLE}, #{classId,jdbcType=BIGINT}, #{taskName,jdbcType=VARCHAR},
+      #{taskQrSrc,jdbcType=VARCHAR})
+  </insert>
+
+
+    <select id="getTaskIdByClassId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select task_id from task where class_id = #{0}
+  </select>
+
+
+    <select id="getTaskId" parameterType="com.pojo.Task" resultType="java.lang.Long">
+    select task_id from task where task_start = #{taskStart} and task_end = #{taskEnd}
+  </select>
+
+    <select id="getEndTimmById" parameterType="java.lang.Long" resultType="java.lang.String">
+    select task_end from task where class_id = #{0}
+
+  </select>
+
+
+    <select id="getTaskByClassId" parameterType="java.lang.Long" resultType="com.pojo.Task">
+
+  select task_id,task_type,task_start,task_end,task_name,task_code,task_qr_src from task where class_id = #{classId}
+
+</select>
+
+
+    <delete id="disMissTaskByClassId" parameterType="java.lang.Long">
+    delete from task where class_id = #{classId}
+  </delete>
+
+
+    <select id="taskIdsByClassId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select task_id from task where class_id = #{classId}
+
+  </select>
+
+
+    <select id="getQrSrcs" parameterType="java.lang.Long" resultType="java.lang.String">
+    select task_qr_src from task where class_id = #{classId}
+  </select>
+
+
+    <select id="getTaskEndTime" parameterType="java.lang.Long" resultType="com.pojo.Task">
+    select * from task where task_id = #{taskId}
+  </select>
+
+    <!--task_id, task_type, task_start,task_end  ,task_name  ,task_longitude ,task_latitude-->
+    <select id="getRecentlyRec" parameterType="java.lang.Long" resultType="com.pojo.Task">
+
+    select  * from task where class_id = #{0}  order by task_start desc LIMIT 1
+
+  </select>
+
+
+    <!--发布签到任务-->
+    <insert id="insertSelective" parameterType="com.pojo.Task">
+        insert into task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="taskType != null">
+                task_type,
+            </if>
+            <if test="taskStart != null">
+                task_start,
+            </if>
+            <if test="taskEnd != null">
+                task_end,
+            </if>
+            <if test="taskCode != null">
+                task_code,
+            </if>
+            <if test="taskLongitude != null">
+                task_longitude,
+            </if>
+            <if test="taskLatitude != null">
+                task_latitude,
+            </if>
+            <if test="classId != null">
+                class_id,
+            </if>
+            <if test="taskName != null">
+                task_name,
+            </if>
+            <if test="taskQrSrc != null">
+                task_qr_src,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="taskType != null">
+                #{taskType,jdbcType=TINYINT},
+            </if>
+            <if test="taskStart != null">
+                #{taskStart,jdbcType=VARCHAR},
+            </if>
+            <if test="taskEnd != null">
+                #{taskEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="taskCode != null">
+                #{taskCode,jdbcType=VARCHAR},
+            </if>
+            <if test="taskLongitude != null">
+                #{taskLongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="taskLatitude != null">
+                #{taskLatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="classId != null">
+                #{classId,jdbcType=BIGINT},
+            </if>
+            <if test="taskName != null">
+                #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="taskQrSrc != null">
+                #{taskQrSrc,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pojo.Task">
+        update task
+        <set>
+            <if test="taskType != null">
+                task_type = #{taskType,jdbcType=TINYINT},
+            </if>
+            <if test="taskStart != null">
+                task_start = #{taskStart,jdbcType=VARCHAR},
+            </if>
+            <if test="taskEnd != null">
+                task_end = #{taskEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="taskCode != null">
+                task_code = #{taskCode,jdbcType=VARCHAR},
+            </if>
+            <if test="taskLongitude != null">
+                task_longitude = #{taskLongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="taskLatitude != null">
+                task_latitude = #{taskLatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="classId != null">
+                class_id = #{classId,jdbcType=BIGINT},
+            </if>
+            <if test="taskName != null">
+                task_name = #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="taskQrSrc != null">
+                task_qr_src = #{taskQrSrc,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where task_id = #{taskId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.pojo.Task">
+    update task
+    set task_type = #{taskType,jdbcType=TINYINT},
+      task_start = #{taskStart,jdbcType=VARCHAR},
+      task_end = #{taskEnd,jdbcType=VARCHAR},
+      task_code = #{taskCode,jdbcType=VARCHAR},
+      task_longitude = #{taskLongitude,jdbcType=DOUBLE},
+      task_latitude = #{taskLatitude,jdbcType=DOUBLE},
+      class_id = #{classId,jdbcType=BIGINT},
+      task_name = #{taskName,jdbcType=VARCHAR},
+      task_qr_src = #{taskQrSrc,jdbcType=VARCHAR}
+    where task_id = #{taskId,jdbcType=BIGINT}
+  </update>
+</mapper>

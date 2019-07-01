@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SignMapper">
+    <resultMap id="BaseResultMap" type="com.pojo.Sign">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="task_id" jdbcType="BIGINT" property="taskId"/>
+        <result column="sign_state" jdbcType="TINYINT" property="signState"/>
+        <result column="sign_time" jdbcType="VARCHAR" property="signTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, task_id, sign_state, sign_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sign
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sign
+    where user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+
+
+    <!--写入签到信息-->
+    <insert id="insert" parameterType="com.pojo.Sign">
+    insert into sign (user_id, task_id, sign_state,
+      sign_time)
+    values (#{userId,jdbcType=BIGINT}, #{taskId,jdbcType=BIGINT}, #{signState,jdbcType=TINYINT},
+      #{signTime,jdbcType=VARCHAR})
+  </insert>
+
+
+    <select id="getSignRec" parameterType="java.lang.Long" resultType="com.pojo.Sign">
+    select * from sign where user_id = #{0} and task_id = #{1}
+
+  </select>
+
+
+    <insert id="saveSignRec" parameterType="java.lang.Long">
+      insert into sign (user_id, task_id)
+    values (#{userId}, #{taskId})
+  </insert>
+
+
+    <!--获取异常和正常的签到记录    select * from  sign where task_id = #{0} and sign_state != 0-->
+    <select id="getRecByNorMal" parameterType="java.lang.Long" resultType="com.pojo.Sign">
+
+    select * from  sign where task_id = #{0}
+  </select>
+
+
+    <select id="getRecByAll" parameterType="java.lang.Long" resultType="com.pojo.Sign">
+    select * from  sign where task_id = #{0}
+  </select>
+
+
+    <update id="updateSignRec" parameterType="com.pojo.Sign">
+    update sign set sign_state = #{signState}, sign_time = #{signTime} where  user_id = #{userId} and  task_id = #{taskId}
+  </update>
+
+
+    <delete id="disMissSignByTaskId" parameterType="java.lang.Long">
+    delete from sign where task_id = #{taskId}
+  </delete>
+
+
+    <delete id="deleteSignByUserIdAndTaskId" parameterType="java.lang.Long">
+      delete from sign where task_id = #{0} and user_id = #{1}
+  </delete>
+
+
+    <!--根据userId 获取 所有未签到记录-->
+    <select id="getSignRecByUserId" parameterType="java.lang.Long" resultType="com.pojo.Sign">
+    select * from sign where user_id = #{0} and sign_state = 0
+  </select>
+
+
+    <insert id="insertSelective" parameterType="com.pojo.Sign">
+        insert into sign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="signState != null">
+                sign_state,
+            </if>
+            <if test="signTime != null">
+                sign_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="signState != null">
+                #{signState,jdbcType=TINYINT},
+            </if>
+            <if test="signTime != null">
+                #{signTime,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pojo.Sign">
+        update sign
+        <set>
+            <if test="taskId != null">
+                task_id = #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="signState != null">
+                sign_state = #{signState,jdbcType=TINYINT},
+            </if>
+            <if test="signTime != null">
+                sign_time = #{signTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.pojo.Sign">
+    update sign
+    set task_id = #{taskId,jdbcType=BIGINT},
+      sign_state = #{signState,jdbcType=TINYINT},
+      sign_time = #{signTime,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=BIGINT} and task_id = #{taskId,jdbcType=BIGINT}
+  </update>
+</mapper>
